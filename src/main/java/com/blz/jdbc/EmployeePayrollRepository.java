@@ -40,4 +40,25 @@ public class EmployeePayrollRepository {
         }
         return employeeInfos;
     }
+
+    public void updateSalary(String name, int salary) {
+        try (Connection connection = getConnection()) {
+            Statement statement = connection.createStatement();
+            // String sqlQuery = "update employee set salary= "+ salary+ "where name ="+name;
+            String sqlQuery = String.format("update employee set salary= %d where name= '%s'", salary, name);
+            int result = statement.executeUpdate(sqlQuery);
+            if (result >= 1) {
+                System.out.println("salary updated");
+            }
+        } catch (SQLException e) {
+
+        }
+    }
 }
+
+
+
+
+
+
+
