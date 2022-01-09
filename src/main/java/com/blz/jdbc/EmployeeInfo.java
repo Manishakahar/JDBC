@@ -1,12 +1,12 @@
 package com.blz.jdbc;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class EmployeeInfo {
     private int id;
     private String name;
     private char gender;
-    private Date startDate;
+    private LocalDate startDate;
     private String phone;
     private String address;
 
@@ -34,11 +34,11 @@ public class EmployeeInfo {
         this.gender = gender;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 

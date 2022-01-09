@@ -1,6 +1,7 @@
 package com.blz.jdbc;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class EmployeePayrollRepository {
                 info.setId(resultSet.getInt("id"));
                 info.setName(resultSet.getString("name"));
                 info.setGender(resultSet.getString("gender").charAt(0));
-                info.setStartDate(resultSet.getDate("startDate"));
+                info.setStartDate(resultSet.getDate("startDate").toLocalDate());
                 info.setAddress(resultSet.getString("address"));
                 info.setPhone(resultSet.getString("phone"));
                 employeeInfos.add(info);
@@ -44,7 +45,6 @@ public class EmployeePayrollRepository {
     public void updateSalary(String name, int salary) {
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
-            // String sqlQuery = "update employee set salary= "+ salary+ "where name ="+name;
             String sqlQuery = String.format("update employee set salary= %d where name= '%s'", salary, name);
             int result = statement.executeUpdate(sqlQuery);
             if (result >= 1) {
@@ -56,18 +56,41 @@ public class EmployeePayrollRepository {
     }
 
     public void updateSalaryUsingPreparedStatement(String name, int salary) {
-      try (Connection connection = getConnection()){
-          String query = "update employee set salary=? where name =?";
-          PreparedStatement preparedStatement = connection.prepareStatement(query);
-          preparedStatement.setInt(1,salary);
-          preparedStatement.setString(2,name);
-          int result = preparedStatement.executeUpdate();
-          if (result >= 1) {
-              System.out.println("salary updated");
-          }
+        try (Connection connection = getConnection()) {
+            String query = "update employee set salary=? where name =?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, salary);
+            preparedStatement.setString(2, name);
+            int result = preparedStatement.executeUpdate();
+            if (result >= 1) {
+                System.out.println("salary updated");
+            }
 
-      } catch (SQLException e) {
-      }
+        } catch (SQLException e) {
+        }
+    }
+
+    public List<EmployeeInfo> retrieveDataJoinedDate(LocalDate date) {
+        List<EmployeeInfo> employeeInfos = new ArrayList<>();
+        try (Connection connection = getConnection()) {
+            String sqlQuery = "select * from employee where startDate between '" + date + "' and Date(now())";
+            Statement preparedStatement = connection.prepareStatement(sqlQuery);
+            //ResultSet resultSet = statement.executeQuery(sqlQuery);
+            ResultSet resultSet = preparedStatement.executeQuery(sqlQuery);
+            while (resultSet.next()) {
+                EmployeeInfo info = new EmployeeInfo();
+                info.setId(resultSet.getInt("id"));
+                info.setName(resultSet.getString("name"));
+                info.setGender(resultSet.getString("gender").charAt(0));
+                info.setStartDate(resultSet.getDate("startDate").toLocalDate());
+                info.setAddress(resultSet.getString("phone"));
+                info.setPhone(resultSet.getString("address"));
+                employeeInfos.add(info);
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employeeInfos;
     }
 }
 
