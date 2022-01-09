@@ -54,6 +54,21 @@ public class EmployeePayrollRepository {
 
         }
     }
+
+    public void updateSalaryUsingPreparedStatement(String name, int salary) {
+      try (Connection connection = getConnection()){
+          String query = "update employee set salary=? where name =?";
+          PreparedStatement preparedStatement = connection.prepareStatement(query);
+          preparedStatement.setInt(1,salary);
+          preparedStatement.setString(2,name);
+          int result = preparedStatement.executeUpdate();
+          if (result >= 1) {
+              System.out.println("salary updated");
+          }
+
+      } catch (SQLException e) {
+      }
+    }
 }
 
 
